@@ -24,19 +24,96 @@
 #include <inttypes.h>
 
 #include "core.h"
-#include "parser.h"
-#include "master/mtypes.h"
-#include "master/mregisters.h"
-#include "master/mcoils.h"
 
-//Enabling modules in compilation process (use makefile to automate this process)
-#ifndef LIGHTMODBUS_MASTER_REGISTERS
-#define LIGHTMODBUS_MASTER_REGISTERS 0
+typedef struct
+{
+	uint8_t predictedResponseLength; //If everything goes fine, slave will return this amout of data
+
+	struct //Formatted request for slave
+	{
+		uint8_t *frame;
+		uint8_t length;
+	} request;
+
+	struct //Response from slave should be put here
+	{
+		uint8_t *frame;
+		uint8_t length;
+	} response;
+
+	struct //Data read from slave
+	{
+		uint8_t address; //Addres of slave
+		uint16_t index; //Address of the first element (in slave device)
+		uint16_t count; //Count of data units (coils, registers, etc.)
+		uint8_t length; //Length of data in bytes
+		uint8_t type; //Type of data
+		uint8_t function; //Function that accessed the data
+		//Two separate pointers are used in case pointer size differed between types (possible on some weird architectures)
+		uint8_t *coils; //Received data
+		uint16_t *regs; //And the same received data, but converted to uint16_t pointer for convenience
+	} data;
+
+	struct //Exceptions read are stored in this structure
+	{
+		uint8_t address; //Device address
+		uint8_t function; //In which function exception occured
+		uint8_t code; //Exception code
+	} exception;
+
+} ModbusMaster; //Type containing master device configuration data
+
+#define MODBUS_HOLDING_REGISTER 1
+#define MODBUS_INPUT_REGISTER 2
+#define MODBUS_COIL 4
+#define MODBUS_DISCRETE_INPUT 8
+
+#ifndef LIGHTMODBUS_MASTER_F0102
+#define LIGHTMODBUS_MASTER_F0102 0
 #endif
-#ifndef LIGHTMODBUS_MASTER_COILS
-#define LIGHTMODBUS_MASTER_COILS 0
+#ifndef LIGHTMODBUS_MASTER_F01
+#define LIGHTMODBUS_MASTER_F01 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F02
+#define LIGHTMODBUS_MASTER_F02 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F0304
+#define LIGHTMODBUS_MASTER_F0304 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F03
+#define LIGHTMODBUS_MASTER_F03 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F04
+#define LIGHTMODBUS_MASTER_F04 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F05
+#define LIGHTMODBUS_MASTER_F05 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F06
+#define LIGHTMODBUS_MASTER_F06 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F15
+#define LIGHTMODBUS_MASTER_F15 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F16
+#define LIGHTMODBUS_MASTER_F16 0
+#endif
+#ifndef LIGHTMODBUS_MASTER_F22
+#define LIGHTMODBUS_MASTER_F22 0
 #endif
 
+//Functions for building requests
+#define modbusBuildRequest01( status, address, index, count ) modbusBuildRequest0102( (status), 01, (address), (index), (count) )
+#define modbusBuildRequest02( status, address, index, count ) modbusBuildRequest0102( (status), 02, (address), (index), (count) )
+extern uint8_t modbusBuildRequest0102( ModbusMaster *status, uint8_t function, uint8_t address, uint16_t index, uint16_t count );
+extern uint8_t modbusBuildRequest05( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t value );
+extern uint8_t modbusBuildRequest15( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t count, uint8_t *values );
+#define modbusBuildRequest03( status, address, index, count ) modbusBuildRequest0304( (status), 3, (address), (index), (count) )
+#define modbusBuildRequest04( status, address, index, count ) modbusBuildRequest0304( (status), 4, (address), (index), (count) )
+extern uint8_t modbusBuildRequest0304( ModbusMaster *status, uint8_t function, uint8_t address, uint16_t index, uint16_t count );
+extern uint8_t modbusBuildRequest06( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t value );
+extern uint8_t modbusBuildRequest16( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t count, uint16_t *values );
+extern uint8_t modbusBuildRequest22( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t andmask, uint16_t ormask );
 extern uint8_t modbusParseResponse( ModbusMaster *status );
 extern uint8_t modbusMasterInit( ModbusMaster *status );
 extern uint8_t modbusMasterEnd( ModbusMaster *status ); //Free memory used by master
