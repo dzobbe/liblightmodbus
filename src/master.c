@@ -37,7 +37,7 @@ static uint8_t modbusParseResponse22( ModbusMaster *status, union ModbusParser *
 
 
 #if ( LIGHTMODBUS_MASTER_F0102 || LIGHTMODBUS_MASTER_F01 || LIGHTMODBUS_MASTER_F02 )
-static uint8_t modbusBuildRequest0102( ModbusMaster *status, uint8_t function, uint8_t address, uint16_t index, uint16_t count )
+uint8_t modbusBuildRequest0102( ModbusMaster *status, uint8_t function, uint8_t address, uint16_t index, uint16_t count )
 {
 	//Build request01 frame, to send it so slave
 	//Read multiple coils
@@ -118,7 +118,7 @@ static uint8_t modbusParseResponse0102( ModbusMaster *status, union ModbusParser
 #endif
 
 #if ( LIGHTMODBUS_MASTER_F05 )
-static uint8_t modbusBuildRequest05( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t value )
+uint8_t modbusBuildRequest05( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t value )
 {
 	//Build request05 frame, to send it so slave
 	//Write single coil
@@ -189,7 +189,7 @@ static uint8_t modbusParseResponse05( ModbusMaster *status, union ModbusParser *
 #endif
 
 #if ( LIGHTMODBUS_MASTER_F15 )
-static uint8_t modbusBuildRequest15( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t count, uint8_t *values )
+uint8_t modbusBuildRequest15( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t count, uint8_t *values )
 {
 	//Build request15 frame, to send it so slave
 	//Write multiple coils
@@ -268,7 +268,7 @@ static uint8_t modbusParseResponse15( ModbusMaster *status, union ModbusParser *
 #endif
 
 #if ( LIGHTMODBUS_MASTER_F0304 || LIGHTMODBUS_MASTER_F03 || LIGHTMODBUS_MASTER_F04 )
-static uint8_t modbusBuildRequest0304( ModbusMaster *status, uint8_t function, uint8_t address, uint16_t index, uint16_t count )
+uint8_t modbusBuildRequest0304( ModbusMaster *status, uint8_t function, uint8_t address, uint16_t index, uint16_t count )
 {
 	//Build request03 frame, to send it so slave
 	//Read multiple holding registers
@@ -354,7 +354,7 @@ static uint8_t modbusParseResponse0304( ModbusMaster *status, union ModbusParser
 #endif
 
 #if ( LIGHTMODBUS_MASTER_F06 )
-static uint8_t modbusBuildRequest06( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t value )
+uint8_t modbusBuildRequest06( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t value )
 {
 	//Build request06 frame, to send it so slave
 	//Write single holding reg
@@ -426,7 +426,7 @@ static uint8_t modbusParseResponse06( ModbusMaster *status, union ModbusParser *
 #endif
 
 #if ( LIGHTMODBUS_MASTER_F16 )
-static uint8_t modbusBuildRequest16( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t count, uint16_t *values )
+uint8_t modbusBuildRequest16( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t count, uint16_t *values )
 {
 	//Build request16 frame, to send it so slave
 	//Write multiple holding registers
@@ -506,7 +506,7 @@ static uint8_t modbusParseResponse16( ModbusMaster *status, union ModbusParser *
 #endif
 
 #if ( LIGHTMODBUS_MASTER_F22 )
-static uint8_t modbusBuildRequest22( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t andmask, uint16_t ormask )
+uint8_t modbusBuildRequest22( ModbusMaster *status, uint8_t address, uint16_t index, uint16_t andmask, uint16_t ormask )
 {
 	//Build request22 frame, to send it so slave
 	//Mask write single holding reg
