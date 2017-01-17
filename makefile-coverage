@@ -4,26 +4,19 @@ CFLAGS = -Wall -g
 LD = ld
 LDFLAGS =
 
-MASTERFLAGS = -DLIGHTMODBUS_MASTER_REGISTERS=1 -DLIGHTMODBUS_MASTER_COILS=1 -DLIGHTMODBUS_MASTER_DISCRETE_INPUTS=1 -DLIGHTMODBUS_MASTER_INPUT_REGISTERS=1
-SLAVEFLAGS = -DLIGHTMODBUS_SLAVE_REGISTERS=1 -DLIGHTMODBUS_SLAVE_COILS=1 -DLIGHTMODBUS_SLAVE_DISCRETE_INPUTS=1 -DLIGHTMODBUS_SLAVE_INPUT_REGISTERS=1
-
+MASTERFLAGS = -DLIGHTMODBUS_MASTER_F01=0 -DLIGHTMODBUS_MASTER_F02=0 -DLIGHTMODBUS_MASTER_F03=1 -DLIGHTMODBUS_MASTER_F04=1 \
+	-DLIGHTMODBUS_MASTER_F05=1 -DLIGHTMODBUS_MASTER_F06=1 -DLIGHTMODBUS_MASTER_F15=1 -DLIGHTMODBUS_MASTER_F16=1 -DLIGHTMODBUS_MASTER_F22=1
+SLAVEFLAGS = -DLIGHTMODBUS_SLAVE_F01=1 -DLIGHTMODBUS_SLAVE_F02=1 -DLIGHTMODBUS_SLAVE_F03=1 -DLIGHTMODBUS_SLAVE_F04=1 \
+	-DLIGHTMODBUS_SLAVE_F05=1 -DLIGHTMODBUS_SLAVE_F06=1 -DLIGHTMODBUS_SLAVE_F15=1 -DLIGHTMODBUS_SLAVE_F16=1 -DLIGHTMODBUS_SLAVE_F22=1
 all: CFLAGS += --coverage -Iinclude
 all: coverage-test valgrind-test massif-test
 
 compile: clean
-	$(CC) $(CFLAGS) -c src/master/mregisters.c
-	$(CC) $(CFLAGS) -c src/slave/sregisters.c
-	$(CC) $(CFLAGS) -c src/master/mcoils.c
-	$(CC) $(CFLAGS) -c src/slave/scoils.c
-	#$(CC) $(CFLAGS) -c src/master/mdiscreteinputs.c
-	#$(CC) $(CFLAGS) -c src/slave/sdiscreteinputs.c
-	#$(CC) $(CFLAGS) -c src/master/minputregisters.c
-	#$(CC) $(CFLAGS) -c src/slave/sinputregisters.c
 	$(CC) $(CFLAGS) $(MASTERFLAGS) -c src/master.c
 	$(CC) $(CFLAGS) $(SLAVEFLAGS) -c src/slave.c
 	$(CC) $(CFLAGS) -c src/core.c
 	$(CC) $(CFLAGS) -c test/test.c
-	$(CC) $(CFLAGS) test.o core.o master.o slave.o mregisters.o sregisters.o mcoils.o scoils.o -o coverage-test
+	$(CC) $(CFLAGS) test.o core.o master.o slave.o -o coverage-test
 
 coverage-test: compile
 	./coverage-test | tee coverage-test.log
